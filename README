@@ -1,7 +1,7 @@
 
 Simple in-memory database using ActiveModel.
 
-Primarily developed for Bowline application.
+Primarily developed for Bowline applications.
 http://github.com/maccman/bowline
 
 Supports:

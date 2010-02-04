@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
     ".gitignore",
      "README",
      "Rakefile",
+     "VERSION",
      "lib/super_model.rb",
      "lib/supermodel.rb",
      "lib/supermodel/base.rb",
@@ -27,7 +28,8 @@ Gem::Specification.new do |s|
      "lib/supermodel/persist.rb",
      "lib/supermodel/random_id.rb",
      "lib/supermodel/scriber.rb",
-     "lib/supermodel/validations.rb"
+     "lib/supermodel/validations.rb",
+     "supermodel.gemspec"
   ]
   s.homepage = %q{http://github.com/maccman/supermodel}
   s.rdoc_options = ["--charset=UTF-8"]
