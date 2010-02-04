@@ -9,11 +9,12 @@ module SuperModel
   
     def save_with_validation(options = nil)
       perform_validation = case options
-        when Hash
-          options[:validate] != false
-        when NilClass
-          true
-        end
+      when Hash
+        options[:validate] != false
+      when NilClass
+        true
+      else
+        options
       end
     
       if perform_validation && valid? || !perform_validation
@@ -22,7 +23,7 @@ module SuperModel
       else
         false
       end
-    rescue ResourceInvalid => error
+    rescue InvalidRecord => error
       false
     end
   end

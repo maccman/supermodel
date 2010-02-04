@@ -1,6 +1,6 @@
 module SuperModel
   module Callbacks
-    extend ActiveResource::Concern
+    extend ActiveSupport::Concern
     extend ActiveModel::Callbacks
     
     included do

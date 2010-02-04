@@ -1,8 +1,5 @@
 module SuperModel
   class Base    
-    class UnknownRecord < SuperModelError; end
-    class InvalidRecord < SuperModelError; end
-    
     include ActiveModel::Dirty
         
     class << self
@@ -18,16 +15,19 @@ module SuperModel
       
       # Find record by ID, or raise.
       def find(id)
-        raw_find(id).try.dup 
+        item = raw_find(id)
+        item && item.dup
       end
       alias :[] :find
     
       def first
-        records[0].try.dup
+        item = records[0]
+        item && item.dup
       end
       
       def last
-        records[-1].try.dup
+        item = records[1]
+        item && item.dup
       end
       
       def count
@@ -92,8 +92,7 @@ module SuperModel
         attrs[k] = v.clone
         attrs
       end
-      resource = self.class.new(cloned)
-      resource
+      self.class.new(cloned)
     end
     
     def new?
@@ -101,12 +100,12 @@ module SuperModel
     end
     alias :new_record? :new?
     
-    # Gets the <tt>\id</tt> attribute of the resource.
+    # Gets the <tt>\id</tt> attribute of the item.
     def id
       attributes[self.class.primary_key]
     end
 
-    # Sets the <tt>\id</tt> attribute of the resource.
+    # Sets the <tt>\id</tt> attribute of the item.
     def id=(id)
       attributes[self.class.primary_key] = id
     end
@@ -125,8 +124,8 @@ module SuperModel
     end
     
     def dup
-      self.class.new.tap do |resource|
-        resource.attributes = @attributes
+      self.class.new.tap do |base|
+        base.attributes = @attributes.dup
       end
     end
     
@@ -182,15 +181,19 @@ module SuperModel
         @attributes[name] = value
       end
       
+      def generate_id
+        object_id
+      end
+      
       def create
-        self.id ||= object_id
+        self.id ||= generate_id
         self.class.records << self.dup
         save_previous_changes
       end
       
       def update
-        resouce = self.class.raw_find(id)
-        resource.load(attributes)
+        item = self.class.raw_find(id)
+        item.load(attributes)
         save_previous_changes
       end
       
@@ -222,6 +225,6 @@ module SuperModel
   class Base
     extend ActiveModel::Naming
     include ActiveModel::Conversion
-    include Observing, Validations, Scribe
+    include Observing, Validations, Scriber
   end
 end
