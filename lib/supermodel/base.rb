@@ -2,26 +2,31 @@ module SuperModel
   class Base    
     class UnknownRecord < SuperModelError; end
     class InvalidRecord < SuperModelError; end
-    
-    define_model_callbacks :create, :update, :destroy
-    
+        
     class << self
+      
+      attr_accessor_with_default(:primary_key, 'id') #:nodoc:
+      
       def records
         @records ||= []
       end
       
+      def raw_find(id) #:nodoc:
+        records.find {|r| r.id == id } || raise(UnknownRecord)
+      end
+      
       # Find record by ID, or raise.
       def find(id)
-        records.find {|r| r.id == id } || raise(UnknownRecord)
+        raw_find(id).try.dup 
       end
       alias :[] :find
     
       def first
-        records[0]
+        records[0].try.dup
       end
       
       def last
-        records[-1]
+        records[-1].try.dup
       end
       
       def count
@@ -29,7 +34,7 @@ module SuperModel
       end
     
       def all
-        records
+        records.dup
       end
       
       def update(id, data)
@@ -66,7 +71,7 @@ module SuperModel
         if method_name =~ /^find_by_(\w+)!/
           send("find_by_#{$1}", *arguments) || raise(UnknownRecord)
         elsif method_name =~ /^find_by_(\w+)/
-          records.find {|r| r.send($1) == send($1) }
+          records.find {|r| r.send($1) == arguments.first }
         else
           super
         end
@@ -122,8 +127,7 @@ module SuperModel
     
     def dup
       self.class.new.tap do |resource|
-        resource.attributes     = @attributes
-        resource.prefix_options = @prefix_options
+        resource.attributes = @attributes
       end
     end
     
@@ -180,7 +184,8 @@ module SuperModel
       end
       
       def update
-        # TODO - record already updated
+        resouce = self.class.raw_find(id)
+        resource.send :instance_variable_set, '@attributes', attributes
       end
     
       def create

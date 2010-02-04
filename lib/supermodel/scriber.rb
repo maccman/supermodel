@@ -11,15 +11,15 @@ module SuperModel
       end
       
       def after_create(rec)
-        rec.record(:create, rec.attributes)
+        rec.class.record(:create, rec.attributes)
       end
       
       def after_update(rec)
-        rec.record(:update, rec.previously_changed_attributes)
+        rec.class.record(:update, rec.previously_changed_attributes)
       end
       
       def after_destroy
-        rec.record(:destroy, rec.id)
+        rec.class.record(:destroy, rec.id)
       end      
     end
     
@@ -33,6 +33,8 @@ module SuperModel
         when :create  then create(data)
         when :destroy then destroy(data)
         when :update  then update(data)
+          method = "load_scripbe_#{type}"
+          send(method) if respond_to?(method)
         end
       end
       
