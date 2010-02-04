@@ -11,21 +11,16 @@ module SuperModel
       end
       
       def after_create(rec)
-        record(:create, rec.attributes)
+        rec.record(:create, rec.attributes)
       end
       
       def after_update(rec)
-        record(:update, rec.previously_changed_attributes)
+        rec.record(:update, rec.previously_changed_attributes)
       end
       
       def after_destroy
-        record(:destroy, rec.id)
-      end
-      
-      protected      
-        def record(type, *data, &block) #:nodoc:
-          ::Scriber.record(self, type, data)
-        end
+        rec.record(:destroy, rec.id)
+      end      
     end
     
     module Model
@@ -33,12 +28,16 @@ module SuperModel
         Scriber.klasses << base
       end
 
-      def run_scriber(type, data) #:nodoc:
+      def load_scribe(type, data) #:nodoc:
         case type
         when :create  then create(data)
         when :destroy then destroy(data)
         when :update  then update(data)
         end
+      end
+      
+      def record(type, data)
+        ::Scriber.record(self, type, data)
       end
     end
   end
