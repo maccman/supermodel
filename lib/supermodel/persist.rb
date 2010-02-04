@@ -15,7 +15,7 @@ module SuperModel
     def load
       return unless path
       File.open(path, "rb") {|file|
-       Marshal.load(file)
+        Marshal.load(file)
       }
     end
   
