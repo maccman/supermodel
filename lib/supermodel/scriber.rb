@@ -37,6 +37,7 @@ module SuperModel
         when :create  then create(data)
         when :destroy then destroy(data)
         when :update  then update(data)
+        else
           method = "scribe_load_#{type}"
           send(method) if respond_to?(method)
         end
