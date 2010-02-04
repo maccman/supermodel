@@ -91,9 +91,7 @@ module SuperModel
         attrs[k] = v.clone
         attrs
       end
-      resource = self.class.new({})
-      resource.prefix_options = self.prefix_options
-      resource.send :instance_variable_set, '@attributes', cloned
+      resource = self.class.new(cloned)
       resource
     end
     
@@ -143,7 +141,7 @@ module SuperModel
       !new?
     end
     
-    def load(attributes)
+    def load(attributes) #:nodoc:
       @attributes.merge!(attributes)
     end
     
@@ -185,7 +183,7 @@ module SuperModel
       
       def update
         resouce = self.class.raw_find(id)
-        resource.send :instance_variable_set, '@attributes', attributes
+        resource.load(attributes)
       end
     
       def create
