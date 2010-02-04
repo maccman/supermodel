@@ -1,4 +1,51 @@
 
 Simple in-memory database using ActiveModel.
 
-Primarily used for Bowline Apps.
+Primarily developed for Bowline application.
+http://github.com/maccman/bowline
+
+Supports:
+  * Serialisation
+  * Validations
+  * Callbacks
+  * Observers
+  * Dirty (Changes)
+  * Persistance
+
+Examples:
+
+  require "supermodel"
+
+  class Test < SuperModel::Base
+  end
+
+  t = Test.new
+  t.name = "foo"
+  t.save #=> true
+
+  Test.all
+  Test.first
+  Test.last
+  Test.find_by_name('foo)
+
+You can use a random ID rather than the object ID:
+  
+  class Test < SuperModel::Base
+    include SuperModel::RandomID
+  end
+  
+  t = Test.create(:name => "test")
+  t.id #=> "7ee935377bb4aecc54ad4f9126"
+  
+You can persist objects to disk on startup/shutdown
+  
+  class Test < SuperModel::Base
+    include SuperModel::Persist::Model
+  end
+  
+  SuperModel::Persist.path = "dump.db"
+  SuperModel::Persist.load
+
+  at_exit {
+    SuperModel::Persist.dump
+  }
