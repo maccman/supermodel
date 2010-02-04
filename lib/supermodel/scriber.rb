@@ -15,7 +15,11 @@ module SuperModel
       end
       
       def after_update(rec)
-        rec.class.record(:update, rec.previously_changed_attributes)
+        changed_to = rec.previous_changes.inject({}) {|hash, (key, (from, to))| 
+          hash[key] = to
+          hash 
+        }
+        rec.class.record(:update, changed_to)
       end
       
       def after_destroy
@@ -28,12 +32,12 @@ module SuperModel
         Scriber.klasses << base
       end
 
-      def load_scribe(type, data) #:nodoc:
+      def scribe_load(type, data) #:nodoc:
         case type
         when :create  then create(data)
         when :destroy then destroy(data)
         when :update  then update(data)
-          method = "load_scripbe_#{type}"
+          method = "scribe_load_#{type}"
           send(method) if respond_to?(method)
         end
       end

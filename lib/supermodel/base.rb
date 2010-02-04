@@ -2,9 +2,10 @@ module SuperModel
   class Base    
     class UnknownRecord < SuperModelError; end
     class InvalidRecord < SuperModelError; end
+    
+    include ActiveModel::Dirty
         
     class << self
-      
       attr_accessor_with_default(:primary_key, 'id') #:nodoc:
       
       def records
@@ -181,13 +182,21 @@ module SuperModel
         @attributes[name] = value
       end
       
+      def create
+        self.id ||= object_id
+        self.class.records << self.dup
+        save_previous_changes
+      end
+      
       def update
         resouce = self.class.raw_find(id)
         resource.load(attributes)
+        save_previous_changes
       end
-    
-      def create
-        self.class.records << self
+      
+      def save_previous_changes
+        @previously_changed = changes
+        changed_attributes.clear
       end
     
     private
@@ -213,7 +222,6 @@ module SuperModel
   class Base
     extend ActiveModel::Naming
     include ActiveModel::Conversion
-    include ActiveModel::Dirty
     include Observing, Validations, Scribe
   end
 end
