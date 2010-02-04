@@ -1,3 +1,6 @@
+require "tempfile"
+require "fileutils"
+
 module SuperModel
   module Persist
     def path
@@ -19,16 +22,18 @@ module SuperModel
       File.open(path, "rb") {|file|
         records = Marshal.load(file)
       }
-      records.flatten.each {|r| r.class.records << r }
+      records.each {|r| r.class.records << r }
       true
     end
   
     def dump
       return unless path
-      records = klasses.map {|k| k.records }
-      File.open(path, "wb+") {|file|
-        Marshal.dump(records, file)
-      }
+      tmp_file = Tempfile.new("rbdump")
+      tmp_file.binmode
+      records  = klasses.map {|k| k.records }.flatten
+      Marshal.dump(records, tmp_file)
+      # Atomic serialization - so we never corrupt the db
+      FileUtils.mv(tmp_file.path, path)
       true
     end
     
