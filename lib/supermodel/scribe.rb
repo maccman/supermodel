@@ -35,9 +35,9 @@ module SuperModel
 
       def run_scriber(type, data) #:nodoc:
         case type
-        when :create      then create(data)
-        when :destroy     then destroy(data)
-        when :update      then update(data)
+        when :create  then create(data)
+        when :destroy then destroy(data)
+        when :update  then update(data)
         end
       end
     end
