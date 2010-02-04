@@ -1,7 +1,11 @@
 module SuperModel
   module Persist
     def path
-      @path
+      @path || raise("Provide a path")
+    end
+    
+    def path=(p)
+      @path = p
     end
     
     def klasses
