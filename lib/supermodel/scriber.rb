@@ -28,23 +28,26 @@ module SuperModel
     end
     
     module Model
-      def self.extended(base)
+      def self.included(base)
         Scriber.klasses << base
-      end
-
-      def scribe_load(type, data) #:nodoc:
-        case type
-        when :create  then create(data)
-        when :destroy then destroy(data)
-        when :update  then update(data)
-        else
-          method = "scribe_load_#{type}"
-          send(method) if respond_to?(method)
-        end
+        base.extend ClassMethods
       end
       
-      def record(type, data)
-        ::Scriber.record(self, type, data)
+      module ClassMethods
+        def scribe_play(type, data) #:nodoc:
+          case type
+          when :create  then create(data)
+          when :destroy then destroy(data)
+          when :update  then update(data)
+          else
+            method = "scribe_play_#{type}"
+            send(method) if respond_to?(method)
+          end
+        end
+      
+        def record(type, data)
+          ::Scriber.record(self, type, data)
+        end
       end
     end
   end

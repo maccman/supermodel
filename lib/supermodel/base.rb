@@ -154,6 +154,10 @@ module SuperModel
       load(attributes) && save
     end
     
+    def has_attribute?(name)
+      @attributes.has_key?(name)
+    end
+    
     alias_method :respond_to_without_attributes?, :respond_to?
     
     def respond_to?(method, include_priv = false)
@@ -225,6 +229,6 @@ module SuperModel
   class Base
     extend ActiveModel::Naming
     include ActiveModel::Conversion
-    include Observing, Validations, Scriber
+    include Observing, Validations
   end
 end
