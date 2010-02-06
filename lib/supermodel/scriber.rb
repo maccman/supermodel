@@ -46,7 +46,7 @@ module SuperModel
         end
       
         def record(type, data = nil)
-          ::Scriber.record(self, type, data = nil)
+          ::Scriber.record(self, type, data)
         end
       end
     end
