@@ -10,7 +10,8 @@ Supports:
   * Callbacks
   * Observers
   * Dirty (Changes)
-  * Persistance
+  * Ruby Marshalling to disk
+  * Redis
 
 Examples:
 
@@ -49,3 +50,13 @@ You can marshal objects to disk on startup/shutdown
   at_exit {
     SuperModel::Marshal.dump
   }
+  
+You can use Redis, you need the Redis gem installed:
+
+  require "redis"
+  class Test < SuperModel::Redis
+    attributes :name
+    indexes :name
+  end
+  
+  Test.find_or_create_by_name("foo")
