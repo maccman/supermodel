@@ -57,7 +57,7 @@ module SuperModel
       # Removes all records and executes 
       # destory callbacks.
       def destroy_all
-        records.dup.each {|r| r.destroy }
+        all.each {|r| r.destroy }
       end
       
       # Removes all records without executing
@@ -74,13 +74,17 @@ module SuperModel
         rec.save && rec
       end
       
+      def find_by_attribute(name, value) #:nodoc:
+        records.find {|r| r.name == value }
+      end
+      
       def method_missing(method_symbol, *args) #:nodoc:
         method_name = method_symbol.to_s
 
         if method_name =~ /^find_by_(\w+)!/
           send("find_by_#{$1}", *args) || raise(UnknownRecord)
         elsif method_name =~ /^find_by_(\w+)/
-          records.find {|r| r.send($1) == args.first }
+          find_by_attribute($1, args.first)
         elsif method_name =~ /^find_or_create_by_(\w+)/
           send("find_by_#{$1}", *args) || create($1 => args.first)
         else
