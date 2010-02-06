@@ -6,7 +6,7 @@ module SuperModel
       attr_accessor_with_default(:primary_key, 'id') #:nodoc:
       
       def attributes(*attributes)
-        @known_attributes = attributes
+        @known_attributes = attributes.map(&:to_s)
       end
       
       def known_attributes
