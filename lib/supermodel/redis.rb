@@ -13,6 +13,14 @@ module SuperModel
         @known_indexes ||= []
       end
       
+      def serialize(*attributes)
+        @serialized_attributes = attributes.map(&:to_s)
+      end
+      
+      def serialized_attributes
+        @serialized_attributes ||= []
+      end
+      
       def redis_key(*args)
         args.unshift(self.name.downcase)
         args.join(":")
@@ -20,7 +28,9 @@ module SuperModel
       
       def find(id)
         if redis.set_member?(redis_key, id)
-          self.new(attributes_for_id(id))
+          res = self.new(:id => id)
+          res.redis_get
+          res
         else
           raise(UnknownRecord)
         end
@@ -31,7 +41,7 @@ module SuperModel
       end
       
       def last
-        all.list
+        all.last
       end
       
       def count
@@ -49,21 +59,18 @@ module SuperModel
       def find_by_attribute(key, value)
         item_ids = redis.set_members(redis_key(key, value))
         return if item_ids.empty?
-        self.new(attributes_for_id(item_ids.first))
+        res = self.new(:id => item_ids.first)
+        res.redis_get
+        res
       end
       
       protected
         def from_ids(ids)
-          ids.map {|i| self.new(attributes_for_id(i)) }
-        end
-        
-        def attributes_for_id(id)
-          result = known_attributes.inject({}) {|hash, attr|
-            hash[attr] = redis.get(redis_key(id, attr))
-            hash
-          }
-          result[self.primary_key] = id
-          result
+          ids.map do |id| 
+            res = self.new(:id => id)
+            res.redis_get
+            res
+          end
         end
     end
         
@@ -109,11 +116,33 @@ module SuperModel
         self.class.redis_key(id, *args)
       end
       
+      def serialized_attributes
+        self.class.serialized_attributes
+      end
+      
+      def serialize_attribute(key, value)
+        return value unless serialized_attributes.include?(key)
+        value.to_json
+      end
+      
+      def deserialize_attribute(key, value)
+        return value unless serialized_attributes.include?(key)
+        JSON.parse(value)
+      end
+      
       def redis_set
         attributes.each do |(key, value)|
-          redis.set(redis_key(key), value)
-        end        
+          redis.set(redis_key(key), serialize_attribute(key, value))
+        end
       end
+      
+      def redis_get
+        known_attributes.each do |key|
+          result = deserialize_attribute(key, redis.get(redis_key(key)))
+          send("#{key}=", result)
+        end
+      end
+      public :redis_get
     
       def create
         self.id ||= generate_id
