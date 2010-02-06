@@ -5,6 +5,14 @@ module SuperModel
     class << self
       attr_accessor_with_default(:primary_key, 'id') #:nodoc:
       
+      def attributes(*attributes)
+        @known_attributes = attributes
+      end
+      
+      def known_attributes
+        @known_attributes ||= []
+      end
+      
       def records
         @records ||= []
       end
@@ -66,13 +74,15 @@ module SuperModel
         rec.save && rec
       end
       
-      def method_missing(method_symbol, *arguments) #:nodoc:
+      def method_missing(method_symbol, *args) #:nodoc:
         method_name = method_symbol.to_s
 
         if method_name =~ /^find_by_(\w+)!/
-          send("find_by_#{$1}", *arguments) || raise(UnknownRecord)
+          send("find_by_#{$1}", *args) || raise(UnknownRecord)
         elsif method_name =~ /^find_by_(\w+)/
-          records.find {|r| r.send($1) == arguments.first }
+          records.find {|r| r.send($1) == args.first }
+        elsif method_name =~ /^find_or_create_by_(\w+)/
+          send("find_by_#{$1}", *args) || create($1 => args.first)
         else
           super
         end
@@ -80,6 +90,10 @@ module SuperModel
     end
     
     attr_accessor :attributes
+    
+    def known_attributes
+      self.class.known_attributes + self.attributes.keys.map(&:to_s)
+    end
     
     def initialize(attributes = {})
       @attributes = {}.with_indifferent_access
@@ -164,6 +178,8 @@ module SuperModel
       method_name = method.to_s
       if attributes.nil?
         super
+      elsif known_attributes.include?(method_name)
+        true
       elsif method_name =~ /(?:=|\?)$/ && attributes.include?($`)
         true
       else
@@ -221,6 +237,7 @@ module SuperModel
           end
         else
           return attributes[method_name] if attributes.include?(method_name)
+          return nil if known_attributes.include?(method_name)
           super
         end
       end
