@@ -34,7 +34,7 @@ module SuperModel
       end
       
       def last
-        item = records[1]
+        item = records[-1]
         item && item.dup
       end
       
