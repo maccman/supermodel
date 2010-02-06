@@ -37,15 +37,15 @@ You can use a random ID rather than the object ID:
   t = Test.create(:name => "test")
   t.id #=> "7ee935377bb4aecc54ad4f9126"
   
-You can persist objects to disk on startup/shutdown
+You can marshal objects to disk on startup/shutdown
   
   class Test < SuperModel::Base
-    include SuperModel::Persist::Model
+    include SuperModel::Marshal::Model
   end
   
-  SuperModel::Persist.path = "dump.db"
-  SuperModel::Persist.load
+  SuperModel::Marshal.path = "dump.db"
+  SuperModel::Marshal.load
 
   at_exit {
-    SuperModel::Persist.dump
+    SuperModel::Marshal.dump
   }

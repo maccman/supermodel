@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
      "lib/supermodel/base.rb",
      "lib/supermodel/callbacks.rb",
      "lib/supermodel/observing.rb",
-     "lib/supermodel/persist.rb",
      "lib/supermodel/random_id.rb",
      "lib/supermodel/scriber.rb",
      "lib/supermodel/validations.rb",

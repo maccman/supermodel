@@ -26,7 +26,7 @@ $: << File.dirname(__FILE__)
 
 require "supermodel/callbacks"
 require "supermodel/observing"
-require "supermodel/persist"
+require "supermodel/marshal"
 require "supermodel/random_id"
 require "supermodel/scriber"
 require "supermodel/validations"
