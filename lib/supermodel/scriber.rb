@@ -1,14 +1,7 @@
 module SuperModel
-  module Scriber
-    def klasses
-      @klasses ||= []
-    end
-    module_function :klasses
-    
-    class Observer < ActiveModel::Observer
-      def self.observed_classes
-        Scriber.klasses
-      end
+  module Scriber    
+    class Observer
+      include Singleton
       
       def after_create(rec)
         rec.class.record(:create, rec.attributes)
@@ -24,13 +17,27 @@ module SuperModel
       
       def after_destroy
         rec.class.record(:destroy, rec.id)
-      end      
+      end
+      
+      def update(observed_method, object) #:nodoc:
+        send(observed_method, object) if respond_to?(observed_method)
+      end
+
+      def observed_class_inherited(subclass) #:nodoc:
+        subclass.add_observer(self)
+      end
     end
+    
+    def klasses
+      @klasses ||= []
+    end
+    module_function :klasses
     
     module Model
       def self.included(base)
         Scriber.klasses << base
         base.extend ClassMethods
+        base.add_observer(Observer.instance)
       end
       
       module ClassMethods
