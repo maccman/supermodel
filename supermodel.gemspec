@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{supermodel}
-  s.version = "0.0.5"
+  s.version = "0.0.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alex MacCaw"]
@@ -24,8 +24,10 @@ Gem::Specification.new do |s|
      "lib/supermodel.rb",
      "lib/supermodel/base.rb",
      "lib/supermodel/callbacks.rb",
+     "lib/supermodel/marshal.rb",
      "lib/supermodel/observing.rb",
      "lib/supermodel/random_id.rb",
+     "lib/supermodel/redis.rb",
      "lib/supermodel/scriber.rb",
      "lib/supermodel/validations.rb",
      "supermodel.gemspec"
