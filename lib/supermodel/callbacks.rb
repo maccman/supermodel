@@ -1,15 +1,18 @@
 module SuperModel
   module Callbacks
     extend ActiveSupport::Concern
-    extend ActiveModel::Callbacks
-    
+
     included do
-      define_model_callbacks :create, :save, :update, :destroy
+      instance_eval do
+        extend ActiveModel::Callbacks
+        define_model_callbacks :create, :save, :update, :destroy
+      end
+      
       %w( create save update destroy ).each do |method|
         class_eval(<<-EOS, __FILE__, __LINE__ + 1)
           def #{method}_with_callbacks(*args, &block)
             _run_#{method}_callbacks do
-              #{method}_without_notifications(*args, &block)
+              #{method}_without_callbacks(*args, &block)
             end
           end
         EOS

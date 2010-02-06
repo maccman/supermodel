@@ -229,6 +229,6 @@ module SuperModel
   class Base
     extend ActiveModel::Naming
     include ActiveModel::Conversion
-    include Observing, Validations
+    include Observing, Validations, Callbacks
   end
 end
