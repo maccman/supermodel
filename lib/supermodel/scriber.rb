@@ -3,6 +3,18 @@ module SuperModel
     class Observer
       include Singleton
       
+      class << self
+        def disabled?
+          @disabled
+        end
+        
+        def disable(&block)
+          @disabled = true
+          yield
+          @disabled = false
+        end
+      end
+   
       def after_create(rec)
         rec.class.record(:create, rec.attributes)
       end
@@ -20,6 +32,7 @@ module SuperModel
       end
       
       def update(observed_method, object) #:nodoc:
+        return if self.class.disabled?
         send(observed_method, object) if respond_to?(observed_method)
       end
 
@@ -42,13 +55,15 @@ module SuperModel
       
       module ClassMethods
         def scribe_play(type, data) #:nodoc:
-          case type
-          when :create  then create(data)
-          when :destroy then destroy(data)
-          when :update  then update(data)
-          else
-            method = "scribe_play_#{type}"
-            send(method) if respond_to?(method)
+          Observer.disable do
+            case type
+            when :create  then create(data)
+            when :destroy then destroy(data)
+            when :update  then update(data)
+            else
+              method = "scribe_play_#{type}"
+              send(method) if respond_to?(method)
+            end
           end
         end
       

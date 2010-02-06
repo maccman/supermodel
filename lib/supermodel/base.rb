@@ -246,6 +246,8 @@ module SuperModel
   class Base
     extend ActiveModel::Naming
     include ActiveModel::Conversion
+    include ActiveModel::Serializers::JSON
+    include ActiveModel::Serializers::Xml
     include Observing, Validations, Callbacks
   end
 end
