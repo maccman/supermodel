@@ -1,15 +1,20 @@
 module SuperModel
-  module Scriber
-    def klasses
-      @klasses ||= []
-    end
-    module_function :klasses
-    
-    class Observer < ActiveModel::Observer
-      def self.observed_classes
-        Scriber.klasses
-      end
+  module Scriber    
+    class Observer
+      include Singleton
       
+      class << self
+        def disabled?
+          @disabled
+        end
+        
+        def disable(&block)
+          @disabled = true
+          yield
+          @disabled = false
+        end
+      end
+   
       def after_create(rec)
         rec.class.record(:create, rec.attributes)
       end
@@ -24,28 +29,45 @@ module SuperModel
       
       def after_destroy
         rec.class.record(:destroy, rec.id)
-      end      
+      end
+      
+      def update(observed_method, object) #:nodoc:
+        return if self.class.disabled?
+        send(observed_method, object) if respond_to?(observed_method)
+      end
+
+      def observed_class_inherited(subclass) #:nodoc:
+        subclass.add_observer(self)
+      end
     end
+    
+    def klasses
+      @klasses ||= []
+    end
+    module_function :klasses
     
     module Model
       def self.included(base)
         Scriber.klasses << base
         base.extend ClassMethods
+        base.add_observer(Observer.instance)
       end
       
       module ClassMethods
         def scribe_play(type, data) #:nodoc:
-          case type
-          when :create  then create(data)
-          when :destroy then destroy(data)
-          when :update  then update(data)
-          else
-            method = "scribe_play_#{type}"
-            send(method) if respond_to?(method)
+          Observer.disable do
+            case type
+            when :create  then create(data)
+            when :destroy then destroy(data)
+            when :update  then update(data)
+            else
+              method = "scribe_play_#{type}"
+              send(method) if respond_to?(method)
+            end
           end
         end
       
-        def record(type, data)
+        def record(type, data = nil)
           ::Scriber.record(self, type, data)
         end
       end
