@@ -156,7 +156,9 @@ module SuperModel
     end
     
     def load(attributes) #:nodoc:
-      @attributes.merge!(attributes)
+      attributes.each {|(name, value)| 
+        self.send("#{name}=".to_sym, value) 
+      }
     end
     
     def update_attribute(name, value)
