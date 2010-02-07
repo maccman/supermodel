@@ -14,8 +14,12 @@ module SuperModel
         @records ||= []
       end
       
+      def find_by_attribute(name, value) #:nodoc:
+        records.find {|r| r.send(name) == value }
+      end
+      
       def raw_find(id) #:nodoc:
-        records.find {|r| r.id == id } || raise(UnknownRecord)
+        find_by_attribute(:id, id) || raise(UnknownRecord)
       end
       
       # Find record by ID, or raise.
@@ -71,10 +75,6 @@ module SuperModel
         rec.save && rec
       end
       
-      def find_by_attribute(name, value) #:nodoc:
-        records.find {|r| r.send(name) == value }
-      end
-      
       def method_missing(method_symbol, *args) #:nodoc:
         method_name = method_symbol.to_s
 
@@ -91,12 +91,14 @@ module SuperModel
     end
     
     attr_accessor :attributes
+    attr_writer :new_record
     
     def known_attributes
       self.class.attributes + self.attributes.keys.map(&:to_s)
     end
     
     def initialize(attributes = {})
+      @new_record = true
       @attributes = {}.with_indifferent_access
       load(attributes)
     end
@@ -111,7 +113,7 @@ module SuperModel
     end
     
     def new?
-      id.nil?
+      @new_record || false
     end
     alias :new_record? :new?
     
@@ -140,7 +142,8 @@ module SuperModel
     
     def dup
       self.class.new.tap do |base|
-        base.attributes = @attributes.dup
+        base.attributes = attributes
+        base.new_record = new_record?
       end
     end
     
@@ -192,7 +195,6 @@ module SuperModel
         
     def destroy
       self.class.records.delete(self)
-      self
     end
     
     protected    
@@ -210,8 +212,10 @@ module SuperModel
       
       def create
         self.id ||= generate_id
+        self.new_record = false
         self.class.records << self.dup
         save_previous_changes
+        self.id
       end
       
       def update

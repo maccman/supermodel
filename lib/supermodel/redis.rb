@@ -22,9 +22,7 @@ module SuperModel
       
       def find(id)
         if redis.set_member?(redis_key, id)
-          res = self.new(:id => id)
-          res.redis_get
-          res
+          existing(:id => id)
         else
           raise(UnknownRecord)
         end
@@ -53,18 +51,19 @@ module SuperModel
       def find_by_attribute(key, value)
         item_ids = redis.set_members(redis_key(key, value))
         return if item_ids.empty?
-        res = self.new(:id => item_ids.first)
-        res.redis_get
-        res
+        existing(:id => item_ids.first)
       end
       
       protected
         def from_ids(ids)
-          ids.map do |id| 
-            res = self.new(:id => id)
-            res.redis_get
-            res
-          end
+          ids.map {|id| existing(id) }
+        end
+        
+        def existing(atts = {})
+          item = self.new(atts)
+          item.new_record = false
+          item.redis_get
+          item
         end
     end
     
@@ -141,10 +140,12 @@ module SuperModel
     
         def create
           self.id ||= generate_id
+          self.new_record = false
           redis_set
           create_indexes
           redis.set_add(self.class.redis_key, self.id)
           save_previous_changes
+          self.id
         end
       
         def update
