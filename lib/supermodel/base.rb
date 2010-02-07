@@ -72,7 +72,7 @@ module SuperModel
       end
       
       def find_by_attribute(name, value) #:nodoc:
-        records.find {|r| r.name == value }
+        records.find {|r| r.send(name) == value }
       end
       
       def method_missing(method_symbol, *args) #:nodoc:
