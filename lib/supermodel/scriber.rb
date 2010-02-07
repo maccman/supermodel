@@ -54,12 +54,12 @@ module SuperModel
       end
       
       module ClassMethods
-        def scribe_play(type, data) #:nodoc:
+        def scribe_play(scribe) #:nodoc:
           Observer.disable do
-            case type
-            when :create  then create(data)
-            when :destroy then destroy(data)
-            when :update  then update(data)
+            case scribe.type
+            when :create  then create(scribe.data)
+            when :destroy then destroy(scribe.data)
+            when :update  then update(scribe.data)
             else
               method = "scribe_play_#{type}"
               send(method) if respond_to?(method)
