@@ -5,20 +5,14 @@ module SuperModel
         @redis ||= ::Redis.new
       end
       
-      def known_indexes
-        @known_indexes ||= []
-      end
-      
       def indexes(*indexes)
-        known_indexes += indexes.map(&:to_s)
-      end
-      
-      def serialized_attributes
-        @serialized_attributes ||= []
+        @indexes ||= []
+        @indexes += indexes.map(&:to_s)
       end
       
       def serialize(*attributes)
-        serialized_attributes += attributes.map(&:to_s)
+        @serialize ||= []
+        @serialize += attributes.map(&:to_s)
       end      
       
       def redis_key(*args)
@@ -106,7 +100,7 @@ module SuperModel
         end
       
         def known_indexes
-          attributes.keys & self.class.known_indexes
+          attributes.keys & self.class.indexes
         end
       
         def redis
@@ -118,7 +112,7 @@ module SuperModel
         end
       
         def serialized_attributes
-          self.class.serialized_attributes
+          self.class.serialize
         end
       
         def serialize_attribute(key, value)
