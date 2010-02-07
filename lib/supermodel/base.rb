@@ -47,8 +47,8 @@ module SuperModel
         records.dup
       end
       
-      def update(id, data)
-        find(id).update(data)
+      def update(id, atts)
+        find(id).update_attributes(atts)
       end
       
       def destroy(id)
