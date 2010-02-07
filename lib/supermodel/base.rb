@@ -5,12 +5,12 @@ module SuperModel
     class << self
       attr_accessor_with_default(:primary_key, 'id') #:nodoc:
       
-      def attributes(*attributes)
-        @known_attributes = attributes.map(&:to_s)
-      end
-      
       def known_attributes
         @known_attributes ||= []
+      end
+      
+      def attributes(*attributes)
+        known_attributes += attributes.map(&:to_s)
       end
       
       def records
