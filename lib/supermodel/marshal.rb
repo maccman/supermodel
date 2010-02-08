@@ -45,11 +45,11 @@ module SuperModel
       end
       
       def marshal_dump
-        @attributes
+        serializable_hash
       end
 
-      def marshal_load(attributes)
-        @attributes = attributes
+      def marshal_load(atts)
+        load(atts)
       end
     end
   end
