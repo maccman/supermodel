@@ -125,7 +125,7 @@ module SuperModel
         end
       
         def redis_set
-          attributes.each do |(key, value)|
+          serializable_hash.each do |(key, value)|
             redis.set(redis_key(key), serialize_attribute(key, value))
           end
         end
