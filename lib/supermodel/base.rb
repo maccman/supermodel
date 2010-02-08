@@ -4,10 +4,18 @@ module SuperModel
         
     class << self
       attr_accessor_with_default(:primary_key, 'id') #:nodoc:
-      
+
       def attributes(*attributes)
         @attributes ||= []
         @attributes += attributes.map(&:to_s)
+      end
+      
+      def attributes=(attributes)
+        @attributes = attributes
+      end
+      
+      def inherited(child) #:nodoc:
+        child.attributes = attributes
       end
       
       def records
