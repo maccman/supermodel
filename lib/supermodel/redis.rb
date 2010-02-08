@@ -56,7 +56,7 @@ module SuperModel
       
       protected
         def from_ids(ids)
-          ids.map {|id| existing(id) }
+          ids.map {|id| existing(:id => id) }
         end
         
         def existing(atts = {})
