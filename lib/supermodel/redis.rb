@@ -121,7 +121,7 @@ module SuperModel
       
         def deserialize_attribute(key, value)
           return value unless serialized_attributes.include?(key)
-          JSON.parse(value)
+          value && JSON.parse(value)
         end
       
         def redis_set
