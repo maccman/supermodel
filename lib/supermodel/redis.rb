@@ -10,10 +10,24 @@ module SuperModel
         @indexes += indexes.map(&:to_s)
       end
       
+      def indexes=(indexes)
+        @indexes = indexes
+      end
+      
       def serialize(*attributes)
         @serialize ||= []
         @serialize += attributes.map(&:to_s)
-      end      
+      end
+      
+      def serialize=(attributes)
+        @serialize = attributes
+      end
+      
+      def inherited(child) #:nodoc:
+        super(child)
+        child.indexes   = indexes
+        child.serialize = serialize
+      end   
       
       def redis_key(*args)
         args.unshift(self.name.downcase)
