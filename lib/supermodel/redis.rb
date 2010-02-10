@@ -1,36 +1,37 @@
 module SuperModel
   module Redis
     module ClassMethods
+      def self.extended(base)
+        base.class_eval do
+          class_inheritable_array :indexed_attributes
+          self.indexed_attributes = []
+          class_inheritable_array :serialized_attributes
+          self.serialized_attributes = []
+        end
+      end
+      
+      def namespace
+        @namespace ||= self.name.downcase
+      end
+      
+      def namespace=(namespace)
+        @namespace = namespace
+      end
+      
       def redis
         @redis ||= ::Redis.new
       end
       
       def indexes(*indexes)
-        @indexes ||= []
-        @indexes += indexes.map(&:to_s)
-      end
-      
-      def indexes=(indexes)
-        @indexes = indexes
+        self.indexed_attributes += indexes.map(&:to_s)
       end
       
       def serialize(*attributes)
-        @serialize ||= []
-        @serialize += attributes.map(&:to_s)
+        self.serialized_attributes += attributes.map(&:to_s)
       end
-      
-      def serialize=(attributes)
-        @serialize = attributes
-      end
-      
-      def inherited(child) #:nodoc:
-        super(child)
-        child.indexes   = indexes
-        child.serialize = serialize
-      end   
       
       def redis_key(*args)
-        args.unshift(self.name.downcase)
+        args.unshift(self.namespace)
         args.join(":")
       end
       
@@ -82,7 +83,12 @@ module SuperModel
     end
     
     module InstanceMethods
-      def destroy
+      # Redis integers are stored as strings
+      def id
+        super.try(:to_i)
+      end
+      
+      def raw_destroy
         return if new?
 
         destroy_indexes
@@ -95,14 +101,14 @@ module SuperModel
     
       protected
         def destroy_indexes
-          known_indexes.each do |index|
+          indexed_attributes.each do |index|
             old_attribute = changes[index].try(:first) || send(index)
             redis.set_delete(self.class.redis_key(index, old_attribute), id)
           end
         end
       
         def create_indexes
-          known_indexes.each do |index|
+          indexed_attributes.each do |index|
             new_attribute = send(index)
             redis.set_add(self.class.redis_key(index, new_attribute), id)
           end
@@ -111,9 +117,9 @@ module SuperModel
         def generate_id
           redis.incr(self.class.redis_key(:uid))
         end
-      
-        def known_indexes
-          attributes.keys & self.class.indexes
+
+        def indexed_attributes
+          attributes.keys & self.class.indexed_attributes
         end
       
         def redis
@@ -125,7 +131,7 @@ module SuperModel
         end
       
         def serialized_attributes
-          self.class.serialize
+          self.class.serialized_attributes
         end
       
         def serialize_attribute(key, value)
@@ -152,21 +158,16 @@ module SuperModel
         end
         public :redis_get
     
-        def create
-          self.id ||= generate_id
-          self.new_record = false
+        def raw_create
           redis_set
           create_indexes
           redis.set_add(self.class.redis_key, self.id)
-          save_previous_changes
-          self.id
         end
       
-        def update
+        def raw_update
           destroy_indexes
           redis_set
           create_indexes
-          save_previous_changes
         end
     end
     

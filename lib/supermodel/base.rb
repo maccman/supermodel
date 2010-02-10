@@ -1,21 +1,14 @@
 module SuperModel
   class Base    
     include ActiveModel::Dirty
-        
+    class_inheritable_array :known_attributes
+    self.known_attributes = []
+    
     class << self
       attr_accessor_with_default(:primary_key, 'id') #:nodoc:
 
       def attributes(*attributes)
-        @attributes ||= []
-        @attributes += attributes.map(&:to_s)
-      end
-      
-      def attributes=(attributes)
-        @attributes = attributes
-      end
-      
-      def inherited(child) #:nodoc:
-        child.attributes = attributes
+        self.known_attributes += attributes.map(&:to_s)
       end
       
       def records
@@ -102,7 +95,7 @@ module SuperModel
     attr_writer :new_record
     
     def known_attributes
-      self.class.attributes + self.attributes.keys.map(&:to_s)
+      self.class.known_attributes + self.attributes.keys.map(&:to_s)
     end
     
     def initialize(attributes = {})
@@ -201,8 +194,13 @@ module SuperModel
       end
     end
         
-    def destroy
+    def raw_destroy
       self.class.records.delete(self)
+    end
+    
+    def destroy
+      raw_destroy
+      self
     end
     
     protected    
@@ -218,18 +216,27 @@ module SuperModel
         object_id
       end
       
+      def raw_create
+        self.class.records << self.dup
+      end
+      
       def create
         self.id ||= generate_id
         self.new_record = false
-        self.class.records << self.dup
+        raw_create
         save_previous_changes
         self.id
       end
       
-      def update
+      def raw_update
         item = self.class.raw_find(id)
         item.load(attributes)
+      end
+      
+      def update
+        raw_update
         save_previous_changes
+        true
       end
       
       def save_previous_changes
