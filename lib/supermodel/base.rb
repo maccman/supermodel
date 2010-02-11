@@ -1,6 +1,5 @@
 module SuperModel
   class Base    
-    include ActiveModel::Dirty
     class_inheritable_array :known_attributes
     self.known_attributes = []
     
@@ -224,7 +223,6 @@ module SuperModel
         self.id ||= generate_id
         self.new_record = false
         raw_create
-        save_previous_changes
         self.id
       end
       
@@ -235,13 +233,7 @@ module SuperModel
       
       def update
         raw_update
-        save_previous_changes
         true
-      end
-      
-      def save_previous_changes
-        @previously_changed = changes
-        changed_attributes.clear
       end
     
     private
@@ -270,6 +262,6 @@ module SuperModel
     include ActiveModel::Conversion
     include ActiveModel::Serializers::JSON
     include ActiveModel::Serializers::Xml
-    include Observing, Validations, Callbacks
+    include Dirty, Observing, Validations, Callbacks
   end
 end
