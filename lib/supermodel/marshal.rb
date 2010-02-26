@@ -18,17 +18,19 @@ module SuperModel
     def load
       return unless path
       return unless File.exist?(path)
-      records = []
+      data = []
       File.open(path, "rb") do |file|
         begin
-          records = ::Marshal.load(file)
+          data = ::Marshal.load(file)
         rescue
           # Lots of errors can occur during
           # marshaling - such as EOF etc
           return false
         end
       end
-      records.each {|r| r.class.records << r }
+      data.each do |klass, records| 
+        klass.marshal_records(records)
+      end
       true
     end
   
@@ -36,8 +38,11 @@ module SuperModel
       return unless path
       tmp_file = Tempfile.new("rbdump")
       tmp_file.binmode
-      records  = klasses.map {|k| k.records }.flatten
-      ::Marshal.dump(records, tmp_file)
+      data = klasses.inject({}) {|hash, klass|
+        hash[klass] = klass.marshal_records
+        hash
+      }
+      ::Marshal.dump(data, tmp_file)
       # Atomic serialization - so we never corrupt the db
       FileUtils.mv(tmp_file.path, path)
       true
@@ -47,6 +52,7 @@ module SuperModel
     
     module Model
       def self.included(base)
+        base.extend ClassMethods
         Marshal.klasses << base
       end
       
@@ -58,6 +64,13 @@ module SuperModel
         # Can't call load, since class
         # isn't setup properly
         @attributes = atts
+      end
+      
+      module ClassMethods
+        def marshal_records(records = nil)
+          @records = records if records
+          @records
+        end
       end
     end
   end
