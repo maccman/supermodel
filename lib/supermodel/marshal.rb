@@ -19,9 +19,15 @@ module SuperModel
       return unless path
       return unless File.exist?(path)
       records = []
-      File.open(path, "rb") {|file|
-        records = ::Marshal.load(file)
-      }
+      File.open(path, "rb") do |file|
+        begin
+          records = ::Marshal.load(file)
+        rescue
+          # Lots of errors can occur during
+          # marshaling - such as EOF etc
+          return false
+        end
+      end
       records.each {|r| r.class.records << r }
       true
     end
