@@ -72,7 +72,7 @@ module SuperModel
       #   create(:name => "foo", :id => 1)
       def create(atts = {})
         rec = self.new(atts)
-        rec.save && rec
+        rec.save! && rec
       end
       
       def method_missing(method_symbol, *args) #:nodoc:
@@ -262,6 +262,6 @@ module SuperModel
     include ActiveModel::Conversion
     include ActiveModel::Serializers::JSON
     include ActiveModel::Serializers::Xml
-    include Dirty, Observing, Validations, Callbacks
+    include Dirty, Observing, Callbacks, Validations
   end
 end
