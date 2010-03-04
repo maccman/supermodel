@@ -11,15 +11,15 @@ module SuperModel
       end
       
       def records
-        @records ||= []
+        @records ||= {}
       end
       
       def find_by_attribute(name, value) #:nodoc:
-        records.find {|r| r.send(name) == value }
+        records.values.find {|r| r.send(name) == value }
       end
       
       def raw_find(id) #:nodoc:
-        find_by_attribute(:id, id) || raise(UnknownRecord)
+        records[id] || raise(UnknownRecord)
       end
       
       # Find record by ID, or raise.
@@ -30,12 +30,12 @@ module SuperModel
       alias :[] :find
     
       def first
-        item = records[0]
+        item = records.values[0]
         item && item.dup
       end
       
       def last
-        item = records[-1]
+        item = records.values[-1]
         item && item.dup
       end
       
@@ -44,7 +44,7 @@ module SuperModel
       end
     
       def all
-        records.dup
+        records.values.dup
       end
       
       def update(id, atts)
@@ -91,7 +91,7 @@ module SuperModel
     end
     
     attr_accessor :attributes
-    attr_writer :new_record
+    attr_writer   :new_record
     
     def known_attributes
       self.class.known_attributes + self.attributes.keys.map(&:to_s)
@@ -192,10 +192,6 @@ module SuperModel
         super
       end
     end
-        
-    def raw_destroy
-      self.class.records.delete(self)
-    end
     
     def destroy
       raw_destroy
@@ -215,8 +211,12 @@ module SuperModel
         object_id
       end
       
+      def raw_destroy
+        self.class.records.delete(self.id)
+      end
+      
       def raw_create
-        self.class.records << self.dup
+        self.class.records[self.id] = self.dup
       end
       
       def create

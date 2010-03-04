@@ -87,19 +87,19 @@ module SuperModel
       def id
         super.try(:to_i)
       end
-      
-      def raw_destroy
-        return if new?
-
-        destroy_indexes
-        redis.set_delete(self.class.redis_key, self.id)
-      
-        attributes.keys.each do |key|
-          redis.delete(redis_key(key))
-        end
-      end
     
-      protected
+      protected      
+        def raw_destroy
+          return if new?
+
+          destroy_indexes
+          redis.set_delete(self.class.redis_key, self.id)
+      
+          attributes.keys.each do |key|
+            redis.delete(redis_key(key))
+          end
+        end
+      
         def destroy_indexes
           indexed_attributes.each do |index|
             old_attribute = changes[index].try(:first) || send(index)
