@@ -15,7 +15,7 @@ module SuperModel
       end
       
       def find_by_attribute(name, value) #:nodoc:
-        records.values.find {|r| r.send(name) == value }
+        records.values.find {|r| r.send(name) == value }.dup
       end
       
       def raw_find(id) #:nodoc:
