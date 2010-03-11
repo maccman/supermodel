@@ -2,3 +2,4 @@ dump.db
 test.rb
 redis_test.rb
 pkg
+lib/supermodel/cassandra.rb
