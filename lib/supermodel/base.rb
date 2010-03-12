@@ -73,7 +73,11 @@ module SuperModel
       #   create(:name => "foo", :id => 1)
       def create(atts = {})
         rec = self.new(atts)
-        rec.save! && rec
+        rec.save && rec
+      end
+      
+      def create!(*args)
+        create(*args) || raise(InvalidRecord)
       end
       
       def method_missing(method_symbol, *args) #:nodoc:
