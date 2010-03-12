@@ -175,6 +175,10 @@ module SuperModel
       load(attributes) && save
     end
     
+    def update_attributes!(attributes)
+      update_attributes(attributes) || raise(InvalidRecord)
+    end
+    
     def has_attribute?(name)
       @attributes.has_key?(name)
     end
