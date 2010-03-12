@@ -36,7 +36,7 @@ module SuperModel
       end
       
       def find(id)
-        if redis.set_member?(redis_key, id)
+        if redis.set_member?(redis_key, id.to_s)
           existing(:id => id)
         else
           raise(UnknownRecord)
@@ -64,7 +64,7 @@ module SuperModel
       end
       
       def find_by_attribute(key, value)
-        item_ids = redis.set_members(redis_key(key, value))
+        item_ids = redis.set_members(redis_key(key, value.to_s))
         return if item_ids.empty?
         existing(:id => item_ids.first)
       end
