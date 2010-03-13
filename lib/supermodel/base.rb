@@ -40,6 +40,10 @@ module SuperModel
         item && item.dup
       end
       
+      def exist?(id)
+        records.has_key?(id)
+      end
+      
       def count
         records.length
       end

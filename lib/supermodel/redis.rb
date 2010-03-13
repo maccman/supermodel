@@ -51,6 +51,10 @@ module SuperModel
         all.last
       end
       
+      def exists?(id)
+        redis.set_member?(redis_key, id.to_s)
+      end
+      
       def count
         redis.set_count(redis_key)
       end
