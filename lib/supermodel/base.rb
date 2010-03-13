@@ -40,7 +40,7 @@ module SuperModel
         item && item.dup
       end
       
-      def exist?(id)
+      def exists?(id)
         records.has_key?(id)
       end
       
