@@ -89,7 +89,7 @@ module SuperModel
     module InstanceMethods
       # Redis integers are stored as strings
       def id
-        super.try(:to_i)
+        super.try(:to_s)
       end
     
       protected      
