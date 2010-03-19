@@ -11,6 +11,11 @@ module SuperModel
         
         private
         
+          def touch
+            set_updated_at
+            save!
+          end
+        
           def set_created_at
             self.created_at = Time.now
           end
