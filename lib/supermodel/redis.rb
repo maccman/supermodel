@@ -69,8 +69,12 @@ module SuperModel
       
       def find_by_attribute(key, value)
         item_ids = redis.set_members(redis_key(key, value.to_s))
-        return if item_ids.empty?
-        existing(:id => item_ids.first)
+        item_id  = item_ids.first
+        item_id && existing(:id => item_id)
+      end
+      
+      def find_all_by_attribute(key, value)
+        from_ids(redis.set_members(redis_key(key, value.to_s)))
       end
       
       protected

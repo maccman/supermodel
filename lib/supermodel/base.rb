@@ -19,6 +19,11 @@ module SuperModel
         item && item.dup
       end
       
+      def find_all_by_attribute(name, value) #:nodoc:
+        items = records.values.select {|r| r.send(name) == value }
+        items.dup
+      end
+      
       def raw_find(id) #:nodoc:
         records[id] || raise(UnknownRecord)
       end
@@ -93,6 +98,8 @@ module SuperModel
           find_by_attribute($1, args.first)
         elsif method_name =~ /^find_or_create_by_(\w+)/
           send("find_by_#{$1}", *args) || create($1 => args.first)
+        elsif method_name =~ /^find_all_by_(\w+)/
+          find_all_by_attribute($1, args.first)
         else
           super
         end
