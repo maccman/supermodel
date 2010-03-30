@@ -28,3 +28,5 @@ module SuperModel
     end
   end
 end
+
+require "supermodel/validations/uniqueness"
