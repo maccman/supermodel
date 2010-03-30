@@ -22,7 +22,10 @@ module SuperModel
       File.open(path, "rb") do |file|
         begin
           data = ::Marshal.load(file)
-        rescue
+        rescue => e
+          if defined?(Bowline)
+            Bowline::Logging.log_error(e)
+          end
           # Lots of errors can occur during
           # marshaling - such as EOF etc
           return false
