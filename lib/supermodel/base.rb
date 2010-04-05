@@ -116,6 +116,7 @@ module SuperModel
     def initialize(attributes = {})
       @new_record = true
       @attributes = {}.with_indifferent_access
+      @changed_attributes = {}
       load(attributes)
     end
     
@@ -278,10 +279,11 @@ module SuperModel
   end
   
   class Base
-    extend ActiveModel::Naming
+    extend  ActiveModel::Naming
     include ActiveModel::Conversion
     include ActiveModel::Serializers::JSON
     include ActiveModel::Serializers::Xml
     include Dirty, Observing, Callbacks, Validations
+    include Association::Model
   end
 end
