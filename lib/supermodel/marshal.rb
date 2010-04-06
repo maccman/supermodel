@@ -32,7 +32,7 @@ module SuperModel
         end
       end
       data.each do |klass, records| 
-        klass.marshal_records(records)
+        klass.marshal_records = records
       end
       true
     end
@@ -60,7 +60,7 @@ module SuperModel
       end
       
       def marshal_dump
-        serializable_hash
+        serializable_hash(self.class.marshal)
       end
 
       def marshal_load(atts)
@@ -70,10 +70,19 @@ module SuperModel
       end
       
       module ClassMethods
-        def marshal_records(records = nil)
-          @records = records if records
-          @records
+        def marshal(options = nil)
+          @marshal = options if options
+          @marshal ||= {}
         end
+        alias_method :marshal=, :marshal
+                
+        def marshal_records=(records)
+          @records = records
+        end
+        
+        def marshal_records
+          @records
+        end    
       end
     end
   end
