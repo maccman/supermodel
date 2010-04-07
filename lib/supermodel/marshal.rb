@@ -66,7 +66,8 @@ module SuperModel
       def marshal_load(atts)
         # Can't call load, since class
         # isn't setup properly
-        @attributes = atts
+        @attributes         = atts
+        @changed_attributes = {}
       end
       
       module ClassMethods
