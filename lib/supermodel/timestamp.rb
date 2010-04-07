@@ -9,19 +9,26 @@ module SuperModel
           before_save   :set_updated_at
         end
         
-        private
+        def touch
+          set_updated_at
+          save!
+        end
         
-          def touch
-            set_updated_at
-            save!
+        private
+          def current_time
+            if Time.respond_to?(:current)
+              Time.current
+            else
+              Time.now
+            end
           end
         
           def set_created_at
-            self.created_at = Time.now
+            self.created_at = current_time
           end
           
           def set_updated_at
-            self.updated_at = Time.now
+            self.updated_at = current_time
           end
       end
     end
