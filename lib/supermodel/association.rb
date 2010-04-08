@@ -9,6 +9,8 @@ module SuperModel
         foreign_key = options[:foreign_key] || "#{to_model}_id"
         primary_key = options[:primary_key] || "id"
         
+        attributes foreign_key
+        
         class_eval(<<-EOS, __FILE__, __LINE__ + 1)
           def #{to_model}                                             # def user
             #{foreign_key} && #{class_name}.find(#{foreign_key})      #   user_id && User.find(user_id)
