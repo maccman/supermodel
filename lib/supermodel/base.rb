@@ -5,6 +5,12 @@ module SuperModel
     
     class << self
       attr_accessor_with_default(:primary_key, 'id') #:nodoc:
+      
+      def collection(&block)
+        @collection ||= Class.new(Array)
+        @collection.class_eval(&block) if block_given?
+        @collection
+      end
 
       def attributes(*attributes)
         self.known_attributes += attributes.map(&:to_s)
@@ -21,7 +27,7 @@ module SuperModel
       
       def find_all_by_attribute(name, value) #:nodoc:
         items = records.values.select {|r| r.send(name) == value }
-        items.dup
+        collection.new(items)
       end
       
       def raw_find(id) #:nodoc:
@@ -54,7 +60,7 @@ module SuperModel
       end
     
       def all
-        records.values.dup
+        collection.new(records.values)
       end
       
       def update(id, atts)
