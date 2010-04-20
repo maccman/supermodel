@@ -60,7 +60,7 @@ module SuperModel
       end
       
       def all
-        from_ids(redis.set_members(redis_key))
+        from_ids(redis.smembers(redis_key))
       end
       
       def delete_all
@@ -68,13 +68,13 @@ module SuperModel
       end
       
       def find_by_attribute(key, value)
-        item_ids = redis.set_members(redis_key(key, value.to_s))
+        item_ids = redis.smembers(redis_key(key, value.to_s))
         item_id  = item_ids.first
         item_id && existing(:id => item_id)
       end
       
       def find_all_by_attribute(key, value)
-        from_ids(redis.set_members(redis_key(key, value.to_s)))
+        from_ids(redis.smembers(redis_key(key, value.to_s)))
       end
       
       protected
@@ -101,7 +101,7 @@ module SuperModel
           return if new?
 
           destroy_indexes
-          redis.set_delete(self.class.redis_key, self.id)
+          redis.srem(self.class.redis_key, self.id)
       
           attributes.keys.each do |key|
             redis.delete(redis_key(key))
@@ -111,14 +111,14 @@ module SuperModel
         def destroy_indexes
           indexed_attributes.each do |index|
             old_attribute = changes[index].try(:first) || send(index)
-            redis.set_delete(self.class.redis_key(index, old_attribute), id)
+            redis.srem(self.class.redis_key(index, old_attribute), id)
           end
         end
       
         def create_indexes
           indexed_attributes.each do |index|
             new_attribute = send(index)
-            redis.set_add(self.class.redis_key(index, new_attribute), id)
+            redis.sadd(self.class.redis_key(index, new_attribute), id)
           end
         end
     
@@ -169,7 +169,7 @@ module SuperModel
         def raw_create
           redis_set
           create_indexes
-          redis.set_add(self.class.redis_key, self.id)
+          redis.sadd(self.class.redis_key, self.id)
         end
       
         def raw_update
