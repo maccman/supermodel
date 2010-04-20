@@ -46,6 +46,7 @@ module SuperModel
         hash
       }
       ::Marshal.dump(data, tmp_file)
+	  tmp_file.close # Fails on windows/jruby unless this is done
       # Atomic serialization - so we never corrupt the db
       FileUtils.mv(tmp_file.path, path)
       true
