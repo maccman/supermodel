@@ -36,7 +36,7 @@ module SuperModel
       end
       
       def find(id)
-        if redis.set_member?(redis_key, id.to_s)
+        if redis.sismember(redis_key, id.to_s)
           existing(:id => id)
         else
           raise(UnknownRecord)
