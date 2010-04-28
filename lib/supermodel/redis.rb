@@ -39,7 +39,7 @@ module SuperModel
         if redis.sismember(redis_key, id.to_s)
           existing(:id => id)
         else
-          raise(UnknownRecord, id)
+          raise UnknownRecord, "Couldn't find #{self.name} with ID=#{id}"
         end
       end
       

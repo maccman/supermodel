@@ -31,7 +31,7 @@ module SuperModel
       end
       
       def raw_find(id) #:nodoc:
-        records[id] || raise(UnknownRecord)
+        records[id] || raise(UnknownRecord, "Couldn't find #{self.name} with ID=#{id}")
       end
       
       # Find record by ID, or raise.
