@@ -9,10 +9,11 @@ module SuperModel
           before_save   :set_updated_at
         end
         
-        def touch
-          set_updated_at
-          save!
-        end
+        public
+          def touch
+            set_updated_at
+            save!
+          end
         
         private
           def current_time
