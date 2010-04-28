@@ -69,7 +69,7 @@ module SuperModel
       
       def find_by_attribute(key, value)
         item_ids = redis.smembers(redis_key(key, value.to_s))
-        item_id  = item_ids.first
+        item_id  = Array(item_ids).first
         item_id && existing(:id => item_id)
       end
       
