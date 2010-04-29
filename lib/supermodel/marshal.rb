@@ -46,7 +46,7 @@ module SuperModel
         hash
       }
       ::Marshal.dump(data, tmp_file)
-	  tmp_file.close # Fails on windows/jruby unless this is done
+  	  tmp_file.close
       # Atomic serialization - so we never corrupt the db
       FileUtils.mv(tmp_file.path, path)
       true
@@ -67,7 +67,7 @@ module SuperModel
       def marshal_load(atts)
         # Can't call load, since class
         # isn't setup properly
-        @attributes         = atts
+        @attributes         = atts.with_indifferent_access
         @changed_attributes = {}
       end
       
