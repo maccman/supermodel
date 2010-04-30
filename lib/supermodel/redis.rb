@@ -60,7 +60,7 @@ module SuperModel
       end
       
       def all
-        from_ids(redis.smembers(redis_key))
+        from_ids(redis.sort(redis_key))
       end
       
       def delete_all
@@ -68,13 +68,13 @@ module SuperModel
       end
       
       def find_by_attribute(key, value)
-        item_ids = redis.smembers(redis_key(key, value.to_s))
+        item_ids = redis.sort(redis_key(key, value.to_s))
         item_id  = item_ids.first
         item_id && existing(:id => item_id)
       end
       
       def find_all_by_attribute(key, value)
-        from_ids(redis.smembers(redis_key(key, value.to_s)))
+        from_ids(redis.sort(redis_key(key, value.to_s)))
       end
       
       protected
