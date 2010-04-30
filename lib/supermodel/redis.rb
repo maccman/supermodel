@@ -44,11 +44,15 @@ module SuperModel
       end
       
       def first
-        all.first
+        item_ids = redis.sort(redis_key, :order => "ASC", :limit => [0, 1])
+        item_id  = item_ids.first
+        item_id && existing(:id => item_id)        
       end
       
       def last
-        all.last
+        item_ids = redis.sort(redis_key, :order => "DESC", :limit => [0, 1])
+        item_id  = item_ids.first
+        item_id && existing(:id => item_id)        
       end
       
       def exists?(id)
