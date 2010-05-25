@@ -24,6 +24,8 @@ end
 
 $:.unshift(File.dirname(__FILE__))
 
+require "supermodel/ext/array"
+
 require "supermodel/association"
 require "supermodel/callbacks"
 require "supermodel/observing"
