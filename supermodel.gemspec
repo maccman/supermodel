@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{supermodel}
-  s.version = "0.1.2"
+  s.version = "0.1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alex MacCaw"]
-  s.date = %q{2010-03-11}
+  s.date = %q{2010-05-11}
   s.description = %q{In memory DB using ActiveModel}
   s.email = %q{info@eribium.org}
   s.extra_rdoc_files = [
@@ -17,11 +17,13 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".gitignore",
+     "MIT-LICENSE",
      "README",
      "Rakefile",
      "VERSION",
      "lib/super_model.rb",
      "lib/supermodel.rb",
+     "lib/supermodel/association.rb",
      "lib/supermodel/base.rb",
      "lib/supermodel/callbacks.rb",
      "lib/supermodel/dirty.rb",
@@ -31,6 +33,7 @@ Gem::Specification.new do |s|
      "lib/supermodel/redis.rb",
      "lib/supermodel/timestamp.rb",
      "lib/supermodel/validations.rb",
+     "lib/supermodel/validations/uniqueness.rb",
      "supermodel.gemspec"
   ]
   s.homepage = %q{http://github.com/maccman/supermodel}
