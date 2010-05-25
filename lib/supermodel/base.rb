@@ -27,7 +27,7 @@ module SuperModel
       
       def find_all_by_attribute(name, value) #:nodoc:
         items = records.values.select {|r| r.send(name) == value }
-        collection.new(items)
+        collection.new(items.dup)
       end
       
       def raw_find(id) #:nodoc:
@@ -60,7 +60,7 @@ module SuperModel
       end
     
       def all
-        collection.new(records.values)
+        collection.new(records.values.dup)
       end
       
       def update(id, atts)
