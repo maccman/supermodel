@@ -67,6 +67,10 @@ module SuperModel
         from_ids(redis.sort(redis_key))
       end
       
+      def select
+        raise "Not implemented"
+      end
+      
       def delete_all
         raise "Not implemented"
       end

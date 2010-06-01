@@ -63,6 +63,10 @@ module SuperModel
         collection.new(records.values.deep_dup)
       end
       
+      def select(&block)
+        collection.new(records.values.select(&block).deep_dup)
+      end
+      
       def update(id, atts)
         find(id).update_attributes(atts)
       end
