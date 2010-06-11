@@ -152,12 +152,12 @@ module SuperModel
       
         def serialize_attribute(key, value)
           return value unless serialized_attributes.include?(key)
-          value.to_json
+          ActiveSupport::JSON.encode(value)
         end
       
         def deserialize_attribute(key, value)
           return value unless serialized_attributes.include?(key)
-          value && JSON.parse(value)
+          value && ActiveSupport::JSON.decode(value)
         end
       
         def redis_set

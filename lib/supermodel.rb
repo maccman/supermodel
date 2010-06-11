@@ -12,6 +12,7 @@ require "active_support/core_ext/object/blank"
 require "active_support/core_ext/object/misc"
 require "active_support/core_ext/object/try"
 require "active_support/core_ext/object/to_query"
+require "active_support/json"
 
 require "active_model"
 
