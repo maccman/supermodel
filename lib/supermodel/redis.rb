@@ -152,7 +152,7 @@ module SuperModel
       
         def serialize_attribute(key, value)
           return value unless serialized_attributes.include?(key)
-          ActiveSupport::JSON.encode(value)
+          value.to_json
         end
       
         def deserialize_attribute(key, value)
