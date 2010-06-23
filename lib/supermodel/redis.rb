@@ -112,7 +112,7 @@ module SuperModel
           redis.srem(self.class.redis_key, self.id)
       
           attributes.keys.each do |key|
-            redis.delete(redis_key(key))
+            redis.del(redis_key(key))
           end
         end
       
