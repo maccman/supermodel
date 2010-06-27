@@ -16,7 +16,6 @@ require "active_support/json"
 
 require "active_model"
 
-
 module SuperModel
   class SuperModelError < StandardError; end
   class UnknownRecord < SuperModelError; end

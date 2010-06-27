@@ -187,9 +187,15 @@ module SuperModel
     end
     
     def load(attributes) #:nodoc:
-      attributes.each {|(name, value)| 
+      attributes.each do |(name, value)| 
         self.send("#{name}=".to_sym, value) 
-      }
+      end
+    end
+    
+    def reload
+      return if new?
+      item = self.class.find(id)
+      load(item.attributes)
     end
     
     def update_attribute(name, value)
