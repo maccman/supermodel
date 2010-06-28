@@ -193,9 +193,10 @@ module SuperModel
     end
     
     def reload
-      return if new?
+      return self if new?
       item = self.class.find(id)
       load(item.attributes)
+      return self
     end
     
     def update_attribute(name, value)
