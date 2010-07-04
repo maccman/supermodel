@@ -23,7 +23,7 @@ module SuperModel
       end
       
       def redis
-        @redis ||= ::Redis.new(redis_options)
+        @redis ||= ::Redis.connect(redis_options)
       end
       
       def indexes(*indexes)
