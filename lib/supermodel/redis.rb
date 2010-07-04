@@ -5,8 +5,12 @@ module SuperModel
         base.class_eval do
           class_inheritable_array :indexed_attributes
           self.indexed_attributes = []
+          
           class_inheritable_array :serialized_attributes
           self.serialized_attributes = []
+          
+          class_inheritable_hash :redis_options
+          self.redis_options = {}
         end
       end
       
@@ -19,7 +23,7 @@ module SuperModel
       end
       
       def redis
-        @redis ||= ::Redis.new
+        @redis ||= ::Redis.new(redis_options)
       end
       
       def indexes(*indexes)
