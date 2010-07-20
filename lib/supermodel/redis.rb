@@ -102,13 +102,8 @@ module SuperModel
         end
     end
     
-    module InstanceMethods
-      # Redis integers are stored as strings
-      def id
-        super.try(:to_s)
-      end
-    
-      protected      
+    module InstanceMethods    
+      protected
         def raw_destroy
           return if new?
 
@@ -135,7 +130,7 @@ module SuperModel
         end
     
         def generate_id
-          redis.incr(self.class.redis_key(:uid))
+          redis.incr(self.class.redis_key(:uid)).to_s
         end
 
         def indexed_attributes
