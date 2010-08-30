@@ -126,6 +126,7 @@ module SuperModel
     def initialize(attributes = {})
       @new_record = true
       @attributes = {}.with_indifferent_access
+      @attributes.merge!(known_attributes.inject({}) {|h, n| h[n] = nil; h })
       @changed_attributes = {}
       load(attributes)
     end
