@@ -186,8 +186,10 @@ module SuperModel
     def exists?
       !new?
     end
+    alias_method :persisted?, :exists?
     
     def load(attributes) #:nodoc:
+      return unless attributes
       attributes.each do |(name, value)| 
         self.send("#{name}=".to_sym, value) 
       end
