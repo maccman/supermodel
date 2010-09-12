@@ -5,7 +5,7 @@ module ActiveModel
       
       def validate_each(record, attribute, value)
         alternate = klass.find_by_attribute(attribute, value)
-        return unless alternate == record
+        return unless alternate
         record.errors.add(attribute, "must be unique", :default => options[:message])
       end
       
