@@ -5,10 +5,7 @@ module SuperModel
         base.class_eval do
           class_inheritable_array :indexed_attributes
           self.indexed_attributes = []
-          
-          class_inheritable_array :serialized_attributes
-          self.serialized_attributes = []
-          
+                    
           class_inheritable_hash :redis_options
           self.redis_options = {}
         end
@@ -29,11 +26,7 @@ module SuperModel
       def indexes(*indexes)
         self.indexed_attributes += indexes.map(&:to_s)
       end
-      
-      def serialize(*attributes)
-        self.serialized_attributes += attributes.map(&:to_s)
-      end
-      
+            
       def redis_key(*args)
         args.unshift(self.namespace)
         args.join(":")
@@ -140,36 +133,17 @@ module SuperModel
         def redis
           self.class.redis
         end
-    
+
         def redis_key(*args)
           self.class.redis_key(id, *args)
         end
       
-        def serialized_attributes
-          self.class.serialized_attributes
-        end
-      
-        def serialize_attribute(key, value)
-          return value unless serialized_attributes.include?(key)
-          value.to_json
-        end
-      
-        def deserialize_attribute(key, value)
-          return value unless serialized_attributes.include?(key)
-          value && ActiveSupport::JSON.decode(value)
-        end
-      
         def redis_set
-          serializable_hash.each do |(key, value)|
-            redis.set(redis_key(key), serialize_attribute(key, value))
-          end
+          redis.set(redis_key, serializable_hash.to_json)
         end
       
         def redis_get
-          known_attributes.each do |key|
-            result = deserialize_attribute(key, redis.get(redis_key(key)))
-            send("#{key}=", result)
-          end
+          ActiveSupport::JSON.decode(redis.get(redis_key))
         end
         public :redis_get
     
