@@ -123,7 +123,7 @@ module SuperModel
         end
     
         def generate_id
-          redis.incr(self.class.redis_key(:uid)).to_s
+          redis.incr(self.class.redis_key(:uid))
         end
 
         def indexed_attributes
