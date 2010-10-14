@@ -143,7 +143,7 @@ module SuperModel
         end
       
         def redis_get
-          ActiveSupport::JSON.decode(redis.get(redis_key))
+          load(ActiveSupport::JSON.decode(redis.get(redis_key)))
         end
         public :redis_get
     
