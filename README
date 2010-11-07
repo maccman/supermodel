@@ -54,7 +54,9 @@ You can marshal objects to disk on startup/shutdown
 You can use Redis, you need the Redis gem installed:
 
   require "redis"
-  class Test < SuperModel::Redis
+  class Test < SuperModel::Base
+    include SuperModel::Redis::Model
+  
     attributes :name
     indexes :name
   end
