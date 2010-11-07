@@ -102,10 +102,7 @@ module SuperModel
 
           destroy_indexes
           redis.srem(self.class.redis_key, self.id)
-      
-          attributes.keys.each do |key|
-            redis.del(redis_key(key))
-          end
+          redis.del(redis_key)
         end
       
         def destroy_indexes
