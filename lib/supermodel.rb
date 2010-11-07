@@ -22,16 +22,21 @@ module SuperModel
 end
 
 $:.unshift(File.dirname(__FILE__))
-
 require "supermodel/ext/array"
 
-require "supermodel/association"
-require "supermodel/callbacks"
-require "supermodel/observing"
-require "supermodel/marshal"
-require "supermodel/random_id"
-require "supermodel/timestamp"
-require "supermodel/validations"
-require "supermodel/dirty"
-require "supermodel/base"
-require "supermodel/redis"
+module SuperModel
+  autoload :Association, "supermodel/association"
+  autoload :Callbacks,   "supermodel/callbacks"
+  autoload :Observing,   "supermodel/observing"
+  autoload :Marshal,     "supermodel/marshal"
+  autoload :RandomID,    "supermodel/random_id"
+  autoload :Timestamp,   "supermodel/timestamp"
+  autoload :Validations, "supermodel/validations"
+  autoload :Dirty,       "supermodel/dirty"
+  autoload :Redis,       "supermodel/redis"
+  autoload :Base,        "supermodel/base"
+end
+
+module ActiveModel
+  autoload :SerializeOptions, "active_model/serialize_options"
+end
