@@ -1,6 +1,6 @@
-module ActiveModel
+module SuperModel
   module Validations
-    class UniquenessValidator < EachValidator
+    class UniquenessValidator < ActiveModel::EachValidator
       attr_reader :klass
       
       def validate_each(record, attribute, value)
