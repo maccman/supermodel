@@ -1,6 +1,6 @@
 module SuperModel
   class Base    
-    class_inheritable_array :known_attributes
+    class_attribute :known_attributes
     self.known_attributes = []
     
     class << self
