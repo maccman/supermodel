@@ -4,7 +4,11 @@ module SuperModel
     self.known_attributes = []
     
     class << self
-      attr_accessor_with_default(:primary_key, 'id') #:nodoc:
+      attr_accessor(:primary_key) #:nodoc:
+      
+      def primary_key
+        @primary_key ||= 'id'
+      end
       
       def collection(&block)
         @collection ||= Class.new(Array)
