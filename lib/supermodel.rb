@@ -2,7 +2,6 @@ gem "activesupport"
 gem "activemodel"
 
 require "active_support/core_ext/class/attribute_accessors"
-require "active_support/core_ext/class/inheritable_attributes"
 require "active_support/core_ext/hash/indifferent_access"
 require "active_support/core_ext/kernel/reporting"
 require "active_support/core_ext/module/attr_accessor_with_default"
