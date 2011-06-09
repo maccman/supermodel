@@ -7,7 +7,7 @@ module SuperModel
       attr_accessor(:primary_key) #:nodoc:
       
       def primary_key
-        attributes[:primary_key] || 'id'
+        @primary_key ||= 'id'
       end
       
       def collection(&block)
