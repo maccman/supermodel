@@ -17,7 +17,7 @@ module SuperModel
       end
 
       def attributes(*attributes)
-        self.known_attributes += attributes.map(&:to_s)
+        self.known_attributes |= attributes.map(&:to_s)
       end
       
       def records
