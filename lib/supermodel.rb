@@ -34,7 +34,3 @@ module SuperModel
   autoload :Redis,       "supermodel/redis"
   autoload :Base,        "supermodel/base"
 end
-
-module ActiveModel
-  autoload :SerializeOptions, "active_model/serialize_options"
-end
