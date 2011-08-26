@@ -124,7 +124,7 @@ module SuperModel
     attr_writer   :new_record
     
     def known_attributes
-      self.class.known_attributes + self.attributes.keys.map(&:to_s)
+      self.class.known_attributes | self.attributes.keys.map(&:to_s)
     end
     
     def initialize(attributes = {})
