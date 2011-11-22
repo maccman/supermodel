@@ -80,7 +80,7 @@ module SuperModel
       end
       
       # Removes all records and executes 
-      # destory callbacks.
+      # destroy callbacks.
       def destroy_all
         all.each {|r| r.destroy }
       end
