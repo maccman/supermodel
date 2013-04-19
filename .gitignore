@@ -4,3 +4,4 @@ redis_test.rb
 pkg
 lib/supermodel/cassandra.rb
 *.gem
+tags

@@ -54,6 +54,19 @@ module SuperModel
         item = records.values[-1]
         item && item.dup
       end
+
+      def where(options)
+        items = records.values.select do |r|
+          options.all? do |k, v|
+            if v.is_a?(Enumerable)
+              v.include?(r.send(k))
+            else
+              r.send(k) == v
+            end
+          end
+        end
+        collection.new(items.deep_dup)
+      end
       
       def exists?(id)
         records.has_key?(id)
