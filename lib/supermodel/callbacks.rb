@@ -11,7 +11,7 @@ module SuperModel
       %w( create save update destroy ).each do |method|
         class_eval(<<-EOS, __FILE__, __LINE__ + 1)
           def #{method}_with_callbacks(*args, &block)
-            _run_#{method}_callbacks do
+            run_callbacks :#{method} do
               #{method}_without_callbacks(*args, &block)
             end
           end
